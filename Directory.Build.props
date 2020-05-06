@@ -1,0 +1,16 @@
+<Project>
+    <PropertyGroup>
+        <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
+        <BaseOutputPath>$(MSBuildThisFileDirectory)bin/$(MSBuildProjectName)/</BaseOutputPath>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <RestorePackagesPath>$(MSBuildThisFileDirectory).nuget</RestorePackagesPath>
+        <RestoreAdditionalProjectSources>@(CustomLocalFeed);$(RestoreAdditionalProjectSources)</RestoreAdditionalProjectSources>
+        <_ReleaseFeedLocation>/Users/tfisher/Documents/cfn-custom-resource/bin/Packages/Release/</_ReleaseFeedLocation>
+        <_DebugFeedLocation>/Users/tfisher/Documents/cfn-custom-resource/bin/Packages/Debug/</_DebugFeedLocation>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <CustomLocalFeed Include="$(_ReleaseFeedLocation)" Condition="Exists($(_ReleaseFeedLocation))" />
+        <CustomLocalFeed Include="$(_DebugFeedLocation)" Condition="Exists($(_DebugFeedLocation))" />
+    </ItemGroup>
+</Project>

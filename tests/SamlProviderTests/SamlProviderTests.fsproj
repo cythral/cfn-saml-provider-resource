@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <GenerateProgramFile>false</GenerateProgramFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FsUnit" Version="3.8.1" />
+    <PackageReference Include="NSubstitute" Version="4.2.1" />
+    <PackageReference Include="nunit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/SamlProvider/SamlProvider.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="ReflectionUtils.fs" />
+    <Compile Include="IamFactoryTests.fs" />
+    <Compile Include="S3FactoryTests.fs" />
+    <Compile Include="SamlProviderTests.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+</Project>

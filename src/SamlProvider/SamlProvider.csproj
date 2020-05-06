@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.IdentityManagement" Version="3.3.105.45" />
+    <PackageReference Include="AWSSDK.S3" Version="3.3.110.63" />
+    <PackageReference Include="AWSSDK.SecurityToken" Version="3.3.104.71" />
+    <PackageReference Include="Cythral.CloudFormation.CustomResource" Version="0.2.26-alpha-gfdb885d51e" />
+  </ItemGroup>
+
+</Project>

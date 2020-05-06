@@ -1,0 +1,29 @@
+﻿<Properties StartupConfiguration="{19156DE4-E128-4E41-9606-23C553F18718}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="src/SamlProvider/SamlProvider.cs">
+    <Files>
+      <File FileName="src/SamlProvider/Aws/S3Factory.cs" Line="1" Column="1" />
+      <File FileName="src/SamlProvider/SamlProvider.cs" Line="1" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="cfn-saml-provider-resource" expanded="True">
+            <Node name="src" expanded="True">
+              <Node name="SamlProvider" expanded="True">
+                <Node name="Aws" expanded="True" />
+                <Node name="SamlProvider.cs" selected="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.tests.SamlProviderTests PreferredExecutionTarget="MonoDevelop.Default" />
+</Properties>
