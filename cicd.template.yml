@@ -133,7 +133,7 @@ Resources:
                 TemplatePath: buildResults::saml-provider.template.yml
                 RoleArn: !ImportValue cfn-utilities:MasterRoleArn
                 Capabilities: CAPABILITY_IAM
-                OutputFileName: certificate-outputs.json
+                OutputFileName: saml-provider-outputs.json
         - Name: Dev
           Actions:
             - Name: Deploy
