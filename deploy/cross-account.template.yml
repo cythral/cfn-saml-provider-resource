@@ -38,15 +38,17 @@ Resources:
         - !Ref CreatorRole
 
 Outputs:
-  CertificateLambdaArn:
+  SamlProviderLambdaArn:
     Value: !Ref SamlProviderLambdaArn
-    Description: ARN of the lambda for the Certificate Custom Resource.
+    Description: ARN of the lambda for the Saml Provider Custom Resource.
     Export:
-      Name: !Sub ${AWS::StackName}:CertificateLambdaArn
+      Name: !Sub ${AWS::StackName}:SamlProviderLambdaArn
 
-  CertificateRoleArn:
+  SamlProviderRoleArn:
     Value: !Ref SamlProviderRoleArn
-    Description: ARN of the role the Certificate Custom Resource uses in the master account.
+    Description: ARN of the role the Saml Provider Custom Resource uses in the master account.
+    Export:
+      Name: !Sub ${AWS::StackName}:SamlProviderRoleArn
 
   CreatorRoleArn:
     Value: !GetAtt CreatorRole.Arn
