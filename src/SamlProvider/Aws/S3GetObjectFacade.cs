@@ -1,5 +1,7 @@
+using System;
 using System.IO;
 using System.Threading.Tasks;
+using static System.Text.Json.JsonSerializer;
 
 using Amazon.S3;
 using Amazon.S3.Model;
@@ -18,7 +20,6 @@ namespace Cythral.CloudFormation.Resources.Aws
         public virtual async Task<string> GetObject(string s3Uri, string? downloaderRoleArn = null)
         {
             var s3Client = await s3Factory.Create(downloaderRoleArn);
-
             var uri = s3UriFactory.Create(s3Uri);
             var getObjResponse = await s3Client.GetObjectAsync(new GetObjectRequest
             {

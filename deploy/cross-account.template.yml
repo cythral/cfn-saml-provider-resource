@@ -1,0 +1,55 @@
+Description: Roles and permissions needed for using a SAML Provider Custom Resource deployed to a different account.
+
+Parameters:
+  SamlProviderLambdaArn:
+    Type: String
+    Description: ARN of the Lambda-backed SAML Provider Custom Resource.
+
+  SamlProviderRoleArn:
+    Type: String
+    Description: ARN of the exeuction role the SAML Provider Custom Resource uses in the master account.
+
+  IamPermissions:
+    Type: CommaDelimitedList
+    Description: List of required acm permissions needed to create/update/delete a saml provider in the agent account.
+
+Resources:
+  CreatorRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              AWS: !Ref SamlProviderRoleArn
+
+  CreatorPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: !Ref IamPermissions
+            Resource: "*"
+      Roles:
+        - !Ref CreatorRole
+
+Outputs:
+  CertificateLambdaArn:
+    Value: !Ref SamlProviderLambdaArn
+    Description: ARN of the lambda for the Certificate Custom Resource.
+    Export:
+      Name: !Sub ${AWS::StackName}:CertificateLambdaArn
+
+  CertificateRoleArn:
+    Value: !Ref SamlProviderRoleArn
+    Description: ARN of the role the Certificate Custom Resource uses in the master account.
+
+  CreatorRoleArn:
+    Value: !GetAtt CreatorRole.Arn
+    Description: ARN of the certificate creator role.
+    Export:
+      Name: !Sub ${AWS::StackName}:CreatorRoleArn

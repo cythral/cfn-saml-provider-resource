@@ -1,8 +1,5 @@
 module SamlProviderTests.Core
 
-open System.Text
-open System.IO
-open System.Runtime.Serialization
 open System.Threading.Tasks
 open NUnit.Framework
 open Cythral.CloudFormation.Resources
@@ -13,7 +10,6 @@ open NSubstitute
 open FsUnit
 open Amazon
 open Amazon.S3
-open Amazon.S3.Model
 open Amazon.S3.Util
 open Amazon.IdentityManagement
 open Amazon.IdentityManagement.Model
@@ -215,4 +211,135 @@ module Update =
             iamFactory.Received().Create(Arg.Is<string>(iamRole))
             |> ignore
             ()
+           }
+
+    [<Test>]
+    let ``An s3GetObjectFacade is created`` () =
+        toTask
+        <| async {
+            samlProvider.Request <- new Request<SamlProvider.Properties>()
+            samlProvider.Request.ResourceProperties <- SamlProvider.Properties()
+            samlProvider.Update() |> Async.AwaitTask |> ignore
+
+            s3GetObjectFacadeFactory.Received().Create()
+            |> ignore
+           }
+
+    [<Test>]
+    let ``The metadata doc is retrieved`` () =
+        toTask
+        <| async {
+            let location = "location"
+            let downloaderArn = "downloaderArn"
+
+            samlProvider.Request <- new Request<SamlProvider.Properties>()
+            samlProvider.Request.ResourceProperties <-
+                SamlProvider.Properties(SamlMetadataDocumentLocation = location, DownloaderRoleArn = downloaderArn)
+            samlProvider.Update() |> Async.AwaitTask |> ignore
+
+            s3GetObjectFacade.Received().GetObject(Arg.Is(location), Arg.Is(downloaderArn))
+            |> ignore
+           }
+
+    [<Test>]
+    let ``The iam saml provider is updated`` () =
+        toTask
+        <| async {
+            let providerArn = "arn"
+            samlProvider.Request <- new Request<SamlProvider.Properties>(PhysicalResourceId = providerArn)
+            samlProvider.Request.ResourceProperties <- SamlProvider.Properties()
+            samlProvider.Update() |> Async.AwaitTask |> ignore
+
+            let request =
+                fun (req: UpdateSAMLProviderRequest) ->
+                    req.SAMLMetadataDocument = metadataDoc
+                    && req.SAMLProviderArn = providerArn
+
+            iamClient.Received().UpdateSAMLProviderAsync(Arg.Is<UpdateSAMLProviderRequest>(request))
+            |> ignore
+           }
+
+    [<Test>]
+    let ``The provider arn is returned in the response`` () =
+        toTask
+        <| async {
+            let providerArn = "arn"
+            samlProvider.Request <- new Request<SamlProvider.Properties>(PhysicalResourceId = providerArn)
+            samlProvider.Request.ResourceProperties <- SamlProvider.Properties()
+
+            let! response = samlProvider.Update() |> Async.AwaitTask
+            response.PhysicalResourceId
+            |> should equal providerArn
+           }
+
+module Delete =
+    let mutable samlProvider: SamlProvider = null
+    let mutable iamFactory: IamFactory = null
+    let mutable iamClient: IAmazonIdentityManagementService = null
+
+    let metadataDoc = "doc"
+    let providerArn = "providerArn"
+
+    [<SetUp>]
+    let SetUp = samlProvider <- SamlProvider()
+
+    [<SetUp>]
+    let SetupIAM () =
+        iamClient <- Substitute.For<IAmazonIdentityManagementService>()
+
+        let response =
+            UpdateSAMLProviderResponse(SAMLProviderArn = providerArn)
+
+        iamClient.UpdateSAMLProviderAsync(Arg.Any<UpdateSAMLProviderRequest>()).Returns(response)
+        |> ignore
+
+        iamFactory <- Substitute.For<IamFactory>()
+        SetPrivateField(samlProvider, "iamFactory", iamFactory)
+
+        iamFactory.Create(Arg.Any<string>()).Returns(iamClient)
+        |> ignore
+
+    [<Test>]
+    let ``An iam client is created with the requested role arn`` () =
+        toTask
+        <| async {
+            let iamRole = "iamRoleArn"
+
+            samlProvider.Request <- new Request<SamlProvider.Properties>()
+            samlProvider.Request.ResourceProperties <- SamlProvider.Properties(CreatorRoleArn = iamRole)
+            samlProvider.Delete() |> Async.AwaitTask |> ignore
+
+            iamFactory.Received().Create(Arg.Is<string>(iamRole))
+            |> ignore
+            ()
+           }
+
+    [<Test>]
+    let ``The saml provider is deleted`` () =
+        toTask
+        <| async {
+            let providerArn = "arn"
+
+            samlProvider.Request <- new Request<SamlProvider.Properties>(PhysicalResourceId = providerArn)
+            samlProvider.Request.ResourceProperties <- SamlProvider.Properties()
+            samlProvider.Delete() |> Async.AwaitTask |> ignore
+
+            let request =
+                fun (req: DeleteSAMLProviderRequest) -> req.SAMLProviderArn = providerArn
+
+            iamClient.Received().DeleteSAMLProviderAsync(Arg.Is<DeleteSAMLProviderRequest>(request))
+            |> ignore
+           }
+
+    [<Test>]
+    let ``The provider arn is returned in the response`` () =
+        toTask
+        <| async {
+            let providerArn = "arn"
+            samlProvider.Request <- new Request<SamlProvider.Properties>(PhysicalResourceId = providerArn)
+            samlProvider.Request.ResourceProperties <- SamlProvider.Properties()
+
+            let! response = samlProvider.Delete() |> Async.AwaitTask
+            response.PhysicalResourceId
+            |> should equal providerArn
            }

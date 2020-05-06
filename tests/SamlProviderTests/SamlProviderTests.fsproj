@@ -22,6 +22,7 @@
     <Compile Include="ReflectionUtils.fs" />
     <Compile Include="IamFactoryTests.fs" />
     <Compile Include="S3FactoryTests.fs" />
+    <Compile Include="S3GetObjectFacadeTests.fs" />
     <Compile Include="SamlProviderTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

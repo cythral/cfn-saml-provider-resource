@@ -20,7 +20,7 @@ namespace Cythral.CloudFormation.Resources.Aws
                     RoleSessionName = "saml-provider-iam-ops"
                 });
 
-                return new AmazonIdentityManagementServiceClient(response.Credentials);
+                return (IAmazonIdentityManagementService)new AmazonIdentityManagementServiceClient(response.Credentials);
             }
 
             return (IAmazonIdentityManagementService)new AmazonIdentityManagementServiceClient();

@@ -1,6 +1,8 @@
 ﻿using System.IO;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using static System.Text.Json.JsonSerializer;
 
 using Amazon.S3.Model;
 using Amazon.IdentityManagement;
@@ -22,17 +24,21 @@ namespace Cythral.CloudFormation.Resources
 
             public string? DownloaderRoleArn { get; set; } = null;
 
+            [Required]
+            [UpdateRequiresReplacement]
             public string Name { get; set; } = "";
 
+            [Required]
             public string SamlMetadataDocumentLocation { get; set; } = "";
         }
 
         private IamFactory iamFactory = new IamFactory();
+
         private S3GetObjectFacadeFactory s3GetObjectFacadeFactory = new S3GetObjectFacadeFactory();
 
         public async Task<Response> Create()
         {
-            var props = this.Request.ResourceProperties;
+            var props = Request.ResourceProperties;
             var iamClient = await iamFactory.Create(props.CreatorRoleArn);
             var s3GetObjectFacade = s3GetObjectFacadeFactory.Create();
 
@@ -43,6 +49,8 @@ namespace Cythral.CloudFormation.Resources
                 SAMLMetadataDocument = metadataDoc
             });
 
+            Console.WriteLine($"Create SAML Provider Response: {Serialize(createSamlProviderResponse)}");
+
             return new Response
             {
                 PhysicalResourceId = createSamlProviderResponse.SAMLProviderArn
@@ -51,21 +59,41 @@ namespace Cythral.CloudFormation.Resources
 
         public async Task<Response> Update()
         {
-            var props = this.Request.ResourceProperties;
+            var props = Request.ResourceProperties;
             var iamClient = await iamFactory.Create(props.CreatorRoleArn);
+            var s3GetObjectFacade = s3GetObjectFacadeFactory.Create();
 
-            return await Task.FromResult(new Response
+            var metadataDoc = await s3GetObjectFacade.GetObject(props.SamlMetadataDocumentLocation, props.DownloaderRoleArn);
+            var updateSamlProviderResponse = await iamClient.UpdateSAMLProviderAsync(new UpdateSAMLProviderRequest
             {
-
+                SAMLProviderArn = Request.PhysicalResourceId,
+                SAMLMetadataDocument = metadataDoc
             });
+
+            Console.WriteLine($"Update SAML Provider Response: {Serialize(updateSamlProviderResponse)}");
+
+            return new Response
+            {
+                PhysicalResourceId = Request.PhysicalResourceId
+            };
         }
 
         public async Task<Response> Delete()
         {
-            return await Task.FromResult(new Response
-            {
+            var props = Request.ResourceProperties;
+            var iamClient = await iamFactory.Create(props.CreatorRoleArn);
 
+            var deleteSamlProviderResponse = await iamClient.DeleteSAMLProviderAsync(new DeleteSAMLProviderRequest
+            {
+                SAMLProviderArn = Request.PhysicalResourceId
             });
+
+            Console.WriteLine($"Delete SAML Provider Response: {Serialize(deleteSamlProviderResponse)}");
+
+            return new Response
+            {
+                PhysicalResourceId = Request.PhysicalResourceId
+            };
         }
     }
 }
