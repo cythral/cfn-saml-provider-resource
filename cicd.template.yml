@@ -170,7 +170,7 @@ Resources:
                   "MessageBody": {
                     "StackName": "${GithubRepo}",
                     "ZipLocation.$": "$.BuildOutput.Build.Artifacts.Location",
-                    "TemplateFileName": "SamlProvider.template.yml",
+                    "TemplateFileName": "saml-provider.template.yml",
                     "RoleArn": "${SharedRoleArn}",
                     "Token.$": "$$.Task.Token",
                     "Capabilities": [
