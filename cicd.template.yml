@@ -199,7 +199,7 @@ Resources:
                       "SamlProviderLambdaArn.$": "$.SharedOutputs.SamlProviderLambdaArn"
                     },
                     "Capabilities": [
-                      "CAPABILIT_IAM"
+                      "CAPABILITY_IAM"
                     ]
                   }
                 },
