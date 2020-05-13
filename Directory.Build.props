@@ -13,4 +13,4 @@
         <CustomLocalFeed Include="$(_ReleaseFeedLocation)" Condition="Exists($(_ReleaseFeedLocation))" />
         <CustomLocalFeed Include="$(_DebugFeedLocation)" Condition="Exists($(_DebugFeedLocation))" />
     </ItemGroup>
-</Project>
+</Project> 
